@@ -8,21 +8,40 @@
     </parent>
 
     <artifactId>kafka</artifactId>
-    <packaging>jar</packaging>
-
+    <packaging>pom</packaging>
     <name>kafka</name>
-    <url>http://maven.apache.org</url>
+    <modules>
+        <module>kafka-producer</module>
+        <module>kafka-consumer</module>
+        <module>kafka-model</module>
+        <module>kafka-config-data</module>
+        <module>kafka-model</module>
+    </modules>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
+    <repositories>
+        <repository>
+            <id>confluent</id>
+            <url>https://packages.confluent.io/maven/</url>
+        </repository>
+    </repositories>
 
-    <dependencies>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>3.8.1</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.kafka</groupId>
+                <artifactId>spring-kafka</artifactId>
+                <version>${spring-kafka-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.confluent</groupId>
+                <artifactId>kafka-avro-serializer</artifactId>
+                <version>${kafka-avro-serializer-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.avro</groupId>
+                <artifactId>avro</artifactId>
+                <version>${avro-version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 </project>
