@@ -11,4 +11,5 @@
     <packaging>jar</packaging>
 
     <name>kafka-producer</name>
+    <dependencies></dependencies>
 </project>
