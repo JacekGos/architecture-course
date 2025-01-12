@@ -16,16 +16,16 @@ public class CancelOrderKafkaMessagePublisher implements OrderCancelledPaymentRe
     private final OrderMessagingDataMapper orderMessagingDataMapper;
     private final OrderServiceConfigData orderServiceConfigData;
     private final KafkaProduer<String, PaymentRequestAvroModel> kafkaProduer;
-    private final OrderKafkaMessageHandler orderKafkaMessageHandler;
+    private final OrderKafkaMessageHelper orderKafkaMessageHelper;
 
     public CancelOrderKafkaMessagePublisher(OrderMessagingDataMapper orderMessagingDataMapper,
                                             OrderServiceConfigData orderServiceConfigData,
                                             KafkaProduer<String, PaymentRequestAvroModel> kafkaProduer,
-                                            OrderKafkaMessageHandler orderKafkaMessageHandler) {
+                                            OrderKafkaMessageHelper orderKafkaMessageHandler) {
         this.orderMessagingDataMapper = orderMessagingDataMapper;
         this.orderServiceConfigData = orderServiceConfigData;
         this.kafkaProduer = kafkaProduer;
-        this.orderKafkaMessageHandler = orderKafkaMessageHandler;
+        this.orderKafkaMessageHelper = orderKafkaMessageHandler;
     }
 
     @Override
@@ -41,7 +41,11 @@ public class CancelOrderKafkaMessagePublisher implements OrderCancelledPaymentRe
                     orderServiceConfigData.getPaymentRequestTopicName(),
                     orderId,
                     paymentRequestAvroModel,
-                    orderKafkaMessageHandler.getKafkaCallback(orderServiceConfigData.getPaymentResponseTopicName(), paymentRequestAvroModel));
+                    orderKafkaMessageHelper.getKafkaCallback
+                            (orderServiceConfigData.getPaymentResponseTopicName(),
+                                    paymentRequestAvroModel,
+                                    orderId,
+                                    "PaymentRequestAvroModel"));
 
             log.info("PaymentRequestAvroModel sent to kafka for order id: {}", paymentRequestAvroModel.getOrderId());
         } catch (Exception e) {

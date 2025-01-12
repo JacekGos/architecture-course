@@ -9,24 +9,27 @@ import org.springframework.util.concurrent.ListenableFutureCallback;
 
 @Slf4j
 @Component
-public class OrderKafkaMessageHandler {
+public class OrderKafkaMessageHelper {
 
-    public ListenableFutureCallback<SendResult<String, PaymentRequestAvroModel>> getKafkaCallback(
-            String paymentResponseTopicName, PaymentRequestAvroModel paymentRequestAvroModel) {
-        return new ListenableFutureCallback<SendResult<String, PaymentRequestAvroModel>>() {
+    public <T> ListenableFutureCallback<SendResult<String, T>> getKafkaCallback(
+            String responseTopicName, T requestAvroModel, String orderId, String requesAvroModelName) {
+        return new ListenableFutureCallback<SendResult<String, T>>() {
             @Override
             public void onFailure(Throwable ex) {
-                log.error("Error while sending PaymentRequestAvroModel message: {} to topic: {}",
-                        ex.getMessage(), paymentResponseTopicName);
+                log.error("Error while sending: {} PaymentRequestAvroModel message: {} to topic: {}",
+                        requesAvroModelName, ex.getMessage(), responseTopicName);
             }
 
             @Override
-            public void onSuccess(SendResult<String, PaymentRequestAvroModel> result) {
+            public void onSuccess(SendResult<String, T> result) {
                 RecordMetadata metadata = result.getRecordMetadata();
                 log.info("Received successfull response from Kafka" +
                                 " for orderId: {}, Topic: {}, Partition: {}, Offset: {}, Timestamp: {}",
-                        paymentRequestAvroModel.getOrderId(),
-                        metadata.topic(), metadata.partition(), metadata.offset(), metadata.timestamp()
+                        orderId,
+                        metadata.topic(),
+                        metadata.partition(),
+                        metadata.offset(),
+                        metadata.timestamp()
 
                 );
             }
